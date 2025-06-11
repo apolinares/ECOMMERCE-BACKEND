@@ -2,9 +2,12 @@ const express = require('express');
 const config = require('./config');
 console.log('>>> Config leída:', config);
 const MongoProductRepository = require('./infraestructure/repositories/MongoProductRepository');
+const MongoCustomerRepository = require('./infraestructure/repositories/MongoCustomerRepository');
 /*const MySQLProductRepository = require('./infraestructure/repositories/MySQLProductRepository');*/
 const ProductController = require('./adapters/controllers/ProductController');
+const CustomerController = require('./adapters/controllers/CustomerController');
 const productRoutes = require('./adapters/routes/productRoutes');
+const customerRoutes = require('./adapters/routes/customerRoutes');
 /*const { verifyToken } = require('./adapters/middlewares/authJwt');
 const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./infraestructure/docs/swaggerConfig');
@@ -23,12 +26,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // Dependencies
 const dbType = config.DB_TYPE || 'mongodb'; // 'mongo' o 'mysql'
-let productRepository;
+let productRepository, customerRepository;
 console.log('>>> DB_TYPE:', dbType);
 if (dbType === 'mysql') {
   productRepository = new MySQLProductRepository();
 } else {
   productRepository = new MongoProductRepository();
+  customerRepository = new MongoCustomerRepository();
 }
 /*// —– SETUP AUTH —–
 const userRepo       = new MongoUserRepository();
@@ -42,12 +46,14 @@ const signUpUseCase = new SignUp(userRepo, passwordHasher);
 app.use('/api/v1/users',express.json(),userRoutes(signUpUseCase));*/
 
 const productController = new ProductController(productRepository);
+const customerController = new CustomerController(customerRepository);
 // Configuración de Swagger UI
 //app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Routes
 //app.use('/api/v1/products', verifyToken, productRoutes(productController));
 app.use('/api/v1/products', productRoutes(productController));
+app.use('/api/v1/customers', customerRoutes(customerController));
 
 // Error Handling
 app.use((err, req, res, next) => {
