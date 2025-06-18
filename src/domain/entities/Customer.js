@@ -1,10 +1,8 @@
 class Customer {
-    constructor({ id, name, ci, email, password, address, phone }) {
-        this.id = id;
+    constructor({ name, ci, email, address, phone }) {
         this.name = name;
         this.ci = ci;
         this.email = email;
-        this.password = password; // Hash en la lógica de negocio
         this.address = address;
         this.phone = phone;
     }
