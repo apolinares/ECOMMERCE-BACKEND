@@ -9,6 +9,7 @@ const CustomerController = require('./adapters/controllers/CustomerController');
 const productRoutes = require('./adapters/routes/productRoutes');
 const customerRoutes = require('./adapters/routes/customerRoutes');
 const { verifyToken } = require('./adapters/middlewares/authJwt');
+const { isAdmin } = require('./adapters/middlewares/authRoles');
 const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./infraestructure/docs/swaggerConfig');
 const MongoUserRepository     = require('./infraestructure/repositories/MongoUserRepository');
@@ -54,7 +55,7 @@ const customerController = new CustomerController(customerRepository);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Routes
-app.use('/api/v1/products', verifyToken, productRoutes(productController));
+app.use('/api/v1/products', verifyToken, isAdmin, productRoutes(productController));
 app.use('/api/v1/customers', verifyToken, customerRoutes(customerController));
 //app.use('/api/v1/products', productRoutes(productController));
 //app.use('/api/v1/customers', customerRoutes(customerController));
