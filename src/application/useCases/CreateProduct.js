@@ -5,8 +5,8 @@ class CreateProduct {
     this.productRepository = productRepository;
   }
 
-  async execute(productData) {
-    const product = new Product(productData);
+  async execute({ name, price, stock = 0 }) { 
+    const product = new Product({ name, price, stock });
     return await this.productRepository.create(product);
   }
 }
