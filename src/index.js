@@ -22,6 +22,13 @@ const SignUp              = require('./application/useCases/SignUp');
 
 const app = express();
 const port = config.port;
+
+const MongoOrderRepository = require('./infraestructure/repositories/MongoOrderRepository');
+const MongoCouponRepository = require('./infraestructure/repositories/MongoCouponRepository');
+const OrderController = require('./adapters/controllers/OrderController');
+const CouponController = require('./adapters/controllers/CouponController');
+const orderRoutes = require('./adapters/routes/orderRoutes');
+const couponRoutes = require('./adapters/routes/couponRoutes');
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -37,6 +44,14 @@ if (dbType === 'mysql') {
   productRepository = new MongoProductRepository();
   customerRepository = new MongoCustomerRepository();
 }
+let orderRepository, couponRepository;
+if (dbType === 'mysql') {
+  // Si usas MySQL para Orders/Coupons, añade aquí su repositorio
+  // orderRepository = new MySQLOrderRepository(); 
+} else {
+  orderRepository = new MongoOrderRepository();
+  couponRepository = new MongoCouponRepository();
+}
 // —– SETUP AUTH —–
 const userRepo       = new MongoUserRepository();
 const passwordHasher = new PasswordHasher();
@@ -50,6 +65,8 @@ app.use('/api/v1/users',express.json(),userRoutes(signUpUseCase));
 
 const productController = new ProductController(productRepository);
 const customerController = new CustomerController(customerRepository);
+const orderController = new OrderController(orderRepository);
+const couponController = new CouponController(couponRepository);
 
 // Configuración de Swagger UI
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
@@ -57,6 +74,8 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // Routes
 app.use('/api/v1/products', verifyToken, isAdmin, productRoutes(productController));
 app.use('/api/v1/customers', verifyToken, customerRoutes(customerController));
+app.use('/api/v1/orders', verifyToken, orderRoutes(orderController));
+app.use('/api/v1/coupons', verifyToken, isAdmin, couponRoutes(couponController));
 //app.use('/api/v1/products', productRoutes(productController));
 //app.use('/api/v1/customers', customerRoutes(customerController));
 
