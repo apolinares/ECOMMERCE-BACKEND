@@ -1,19 +1,26 @@
-const CreateOrder = require('../../application/useCases/CreateOrder');
-const GetOrderById = require('../../application/useCases/GetOrderById');
+const CreateProduct = require('../../application/useCases/CreateOrder');
+const ProductDTO = require('../../application/dtos/OrderDTO');
+class OrderController {
+    constructor({ orderService, userService }) {
+        this.orderService = orderService;
+        this.userService = userService;
+    }
 
-module.exports = {
     async createOrder(req, res) {
         try {
-            const order = await CreateOrder.execute(req.body);
+            const userId = req.user.id;
+            const orderData = req.body;
+            const order = await this.orderService.createOrder(userId, orderData);
             res.status(201).json(order);
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(500).json({ error: error.message });
         }
-    },
+    }
 
     async getOrderById(req, res) {
         try {
-            const order = await GetOrderById.execute(req.params.id);
+            const orderId = req.params.id;
+            const order = await this.orderService.getOrderById(orderId);
             if (!order) {
                 return res.status(404).json({ error: 'Order not found' });
             }
@@ -21,6 +28,9 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    },
-   
-};
+    }
+
+    // Agrega más métodos según sea necesario
+}
+
+module.exports = OrderController;

@@ -4,7 +4,7 @@ const router = express.Router();
 module.exports = (productController) => {
   router.get('/', (req, res) => productController.getAll(req, res));
   router.post('/', (req, res) => productController.create(req, res));
-  router.patch('/:id/stock', ProductController.updateStock);
+  router.patch('/:id/stock', (req, res) => productController.updateStock(req, res));
 
   return router;
 };

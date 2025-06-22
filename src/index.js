@@ -24,11 +24,11 @@ const app = express();
 const port = config.port;
 
 const MongoOrderRepository = require('./infraestructure/repositories/MongoOrderRepository');
-const MongoCouponRepository = require('./infraestructure/repositories/MongoCouponRepository');
+const MongoCuponRepository = require('./infraestructure/repositories/MongoCuponRepository');
 const OrderController = require('./adapters/controllers/OrderController');
-const CouponController = require('./adapters/controllers/CouponController');
+const CuponController = require('./adapters/controllers/CuponController');
 const orderRoutes = require('./adapters/routes/orderRoutes');
-const couponRoutes = require('./adapters/routes/couponRoutes');
+const cuponRoutes = require('./adapters/routes/cuponRoutes');
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -44,13 +44,13 @@ if (dbType === 'mysql') {
   productRepository = new MongoProductRepository();
   customerRepository = new MongoCustomerRepository();
 }
-let orderRepository, couponRepository;
+let orderRepository, cuponRepository;
 if (dbType === 'mysql') {
   // Si usas MySQL para Orders/Coupons, añade aquí su repositorio
   // orderRepository = new MySQLOrderRepository(); 
 } else {
   orderRepository = new MongoOrderRepository();
-  couponRepository = new MongoCouponRepository();
+  cuponRepository = new MongoCuponRepository();
 }
 // —– SETUP AUTH —–
 const userRepo       = new MongoUserRepository();
@@ -66,7 +66,7 @@ app.use('/api/v1/users',express.json(),userRoutes(signUpUseCase));
 const productController = new ProductController(productRepository);
 const customerController = new CustomerController(customerRepository);
 const orderController = new OrderController(orderRepository);
-const couponController = new CouponController(couponRepository);
+const cuponController = new CuponController(cuponRepository);
 
 // Configuración de Swagger UI
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
@@ -75,7 +75,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use('/api/v1/products', verifyToken, isAdmin, productRoutes(productController));
 app.use('/api/v1/customers', verifyToken, customerRoutes(customerController));
 app.use('/api/v1/orders', verifyToken, orderRoutes(orderController));
-app.use('/api/v1/coupons', verifyToken, isAdmin, couponRoutes(couponController));
+app.use('/api/v1/cupons', verifyToken, isAdmin, cuponRoutes(cuponController));
 //app.use('/api/v1/products', productRoutes(productController));
 //app.use('/api/v1/customers', customerRoutes(customerController));
 
