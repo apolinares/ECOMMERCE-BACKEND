@@ -9,6 +9,7 @@ const CustomerController = require('./adapters/controllers/CustomerController');
 const productRoutes = require('./adapters/routes/productRoutes');
 const customerRoutes = require('./adapters/routes/customerRoutes');
 const { verifyToken } = require('./adapters/middlewares/authJwt');
+const { refreshToken } = require('./adapters/middlewares/authJwt');
 const { isAdmin } = require('./adapters/middlewares/authRoles');
 const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./infraestructure/docs/swaggerConfig');
