@@ -23,4 +23,21 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-module.exports = { verifyToken };
+const refreshToken = (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) return res.status(403).json({ message: 'No token provided!' });
+
+    jwt.verify(token, config.jwtSecret, { ignoreExpiration: true }, (err, decoded) => {
+    if (err || !decoded) return res.status(401).json({ message: 'Invalid token' });
+
+    const newToken = jwt.sign(
+        { id: decoded.id, roles: decoded.roles },
+        config.jwtSecret,
+        { expiresIn: '1h' }
+    );
+
+    res.json({ token: newToken });
+    });
+};
+
+module.exports = { verifyToken, refreshToken };
