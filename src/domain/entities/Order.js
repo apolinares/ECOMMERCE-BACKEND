@@ -3,7 +3,7 @@ class Order {
         this.userId = userId;
         this.items = items;
         this.total = total;
-        this.couponCode = couponCode;
+        this.cuponCode = cuponCode;
         this.status = status;
         this.createdAt = new Date();
     }
